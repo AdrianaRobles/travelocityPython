@@ -80,8 +80,9 @@ class TravelocitySelectYourDeparture (BasePage):
         WebDriverWait(self.driver,10).until(EC.visibility_of_all_elements_located((By.XPATH,"//ul[@id='flightModuleList']")))  
         print("There are "+str(len(self.listOfFlies))+" flies to verify select")
         x=0
+        numLi=0
         for fly in self.listOfFlies:
-            
+            numLi = numLi+1
             varClass = fly.get_attribute("class")
             if varClass == "flight-module segment offer-listing":
                 try:
@@ -92,17 +93,25 @@ class TravelocitySelectYourDeparture (BasePage):
                     if varSelect.text == "Select result "+str(x)+" when sorted by price":
                         varReturn = True
                 except NoSuchElementException as e:
-                    print(varSelect.text)
                     varReturn = False
                     varFallo="The element number "+str(x)+" has not button select"
-                    print("Error has got be The element number "+str(x)+" has not button select")
+                    print("Error has to be That the element number "+str(x)+" has not button select")
                     continue
-                varDuration = fly.find_element_by_xpath("//span[@class='duration-emphasis'][@data-test-id='duration']")
-                print(varDuration.text)
+                try:
+                    varTextToDuration="//li["+str(numLi)+"]//span[@class='duration-emphasis'][@data-test-id='duration']"
+                    varDuration = fly.find_element_by_xpath(varTextToDuration)
+                    if varDuration.text:
+                        varReturn = True
+                except NoSuchElementException as e:
+                    varReturn = False
+                    varFallo="The element li number "+str(numLi)+" has not duration"
+                    print("Error has to be that the li number "+str(numLi)+" has not duration ")
+                    
             else:
                 #print("The webElement has not to have select because is a promo")
                 continue     
         return str(varReturn)+"-"+varFallo
     
-  
+    
+                
         
