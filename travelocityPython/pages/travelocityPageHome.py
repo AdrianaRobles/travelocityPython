@@ -52,7 +52,6 @@ class TravelocityHome(BasePage):
         
         while True:
             nameMonth=self.driver.find_element_by_css_selector("caption.datepicker-cal-month-header")
-            print(nameMonth.text)
             if nameMonth.text!=month:
                 buttonNextMonth=self.driver.find_element_by_css_selector("div.datepicker-cal button.next")
                 WebDriverWait(self.driver,10).until(EC.element_to_be_clickable((By.CSS_SELECTOR,"div.datepicker-cal button.next")))

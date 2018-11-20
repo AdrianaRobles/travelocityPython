@@ -17,6 +17,7 @@ class TestTravelocity(BaseTest):
         varAsserBoolean=ast.literal_eval(varArrayReturn[0])
         varReturnFallo = varArrayReturn[1]
         print(varReturnFallo)
+        print(varAsserBoolean)
         assert varAsserBoolean == True
         
         
