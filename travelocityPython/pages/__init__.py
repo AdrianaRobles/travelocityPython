@@ -26,7 +26,11 @@ class BasePage():
             'Dec' : 12
         }[shortMonth]
     
+    def splitReturn(self,stringReturn,numParam):
+        varArrayString = stringReturn.split("-")
+        return varArrayString[numParam]
         
+            
 
         
     

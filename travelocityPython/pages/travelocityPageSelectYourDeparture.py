@@ -3,26 +3,53 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+import ast
+
 '''
 Created on 17/11/2018
 
 @author: aldo.villalba
 '''
 class TravelocitySelectYourDeparture (BasePage):
-    
+    '''
+    Method to get webElement from the pages
+    '''
     def __init__(self,driver):
         super().__init__(driver)
         self.sortDropdown=self.driver.find_elements_by_id("sortDropdown")
         self.listOfFlies=self.driver.find_elements_by_xpath("//ul[@id='flightModuleList']/li")
+    '''
+    Method to Verify all components in the pages
+    Sort
+    ButtonSelect
+    Duration Fly
+    flight detail and baggage fees
+    
+    '''    
+    def verifyAllComponents(self):
+        varVerifyAllComponents="True-AllComponents are ok"
+        varReturnVerifySort=self.__verifySort()
+        varReturnVerifyButtonSelect=self.__verifyButtonSelect()
         
-    def verifyAllComponets(self):
+        if ast.literal_eval(self.splitReturn(varReturnVerifySort, 0))== False:
+            varVerifyAllComponents=varReturnVerifySort
+        elif ast.literal_eval(self.splitReturn(varReturnVerifyButtonSelect, 0))==False:
+            varVerifyAllComponents=varReturnVerifyButtonSelect
+        return varVerifyAllComponents
+                
+    '''
+    Method to verify Sort and options of select
+    select one allow order by price, Departure, Arrival or duration
+    
+    '''
+    def __verifySort(self):
         varPrice = False
         varDeparture = False
         varArrival = False
-        varDuration = False
-        varFallo = "All components are ok"
-                
+        varDuration = False 
+        varFallo = "All components are ok"       
         for items in self.sortDropdown:
+            
             if items.text.lower().find("price")!= -1:
                 varPrice = True
             else:
@@ -39,13 +66,18 @@ class TravelocitySelectYourDeparture (BasePage):
                 varDuration = True
             else:
                 varFallo="Sort has not duration"
-
         if varPrice==True and varDeparture == True and varArrival == True and varDuration == True:
             varReturn = True
         else:
             varReturn = False
+        return str(varReturn)+"-"+varFallo
+    '''
+    Method to verify that in every result 
+    there is a button to select
+    '''
+    def __verifyButtonSelect(self):
+        varFallo="All result has button select"
         WebDriverWait(self.driver,10).until(EC.visibility_of_all_elements_located((By.XPATH,"//ul[@id='flightModuleList']")))  
-        
         print("There are "+str(len(self.listOfFlies))+" flies to verify select")
         x=0
         for fly in self.listOfFlies:
@@ -65,12 +97,12 @@ class TravelocitySelectYourDeparture (BasePage):
                     varFallo="The element number "+str(x)+" has not button select"
                     print("Error has got be The element number "+str(x)+" has not button select")
                     continue
+                varDuration = fly.find_element_by_xpath("//span[@class='duration-emphasis'][@data-test-id='duration']")
+                print(varDuration.text)
             else:
                 #print("The webElement has not to have select because is a promo")
                 continue     
-        
         return str(varReturn)+"-"+varFallo
-                
-                
-                
-                
+    
+  
+        
