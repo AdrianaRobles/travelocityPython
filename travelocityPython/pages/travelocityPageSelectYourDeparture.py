@@ -79,8 +79,9 @@ class TravelocitySelectYourDeparture (BasePage):
         varFallo="All result has button select"
         WebDriverWait(self.driver,10).until(EC.visibility_of_all_elements_located((By.XPATH,"//ul[@id='flightModuleList']")))  
         print("There are "+str(len(self.listOfFlies))+" flies to verify select")
-        x=0
-        numLi=0
+       
+        x=0  #var to count to select button
+        numLi=0  #var to count li to baggages, duration, flight details
         for fly in self.listOfFlies:
             numLi = numLi+1
             varClass = fly.get_attribute("class")
@@ -100,12 +101,21 @@ class TravelocitySelectYourDeparture (BasePage):
                 try:
                     varTextToDuration="//li["+str(numLi)+"]//span[@class='duration-emphasis'][@data-test-id='duration']"
                     varDuration = fly.find_element_by_xpath(varTextToDuration)
-                    if varDuration.text:
+                    if varDuration.text :
                         varReturn = True
                 except NoSuchElementException as e:
                     varReturn = False
                     varFallo="The element li number "+str(numLi)+" has not duration"
                     print("Error has to be that the li number "+str(numLi)+" has not duration ")
+                try:
+                    varTextToBaggage="//li["+str(numLi)+"]//span[@class='forced-tray-toggle-text']"
+                    varBaggage = fly.find_element_by_xpath(varTextToBaggage)
+                    if varBaggage == "See fare restrictions and baggage fees":
+                        varReturn = True
+                except NoSuchElementException as e:
+                    varReturn = False
+                    varFallo="The element li number "+str(numLi)+" has not baggage"
+                    print("Error has to be that the li number "+str(numLi)+" has not baggage")
                     
             else:
                 #print("The webElement has not to have select because is a promo")
