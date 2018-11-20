@@ -18,6 +18,8 @@ class TravelocitySelectYourDeparture (BasePage):
         super().__init__(driver)
         self.sortDropdown=self.driver.find_elements_by_id("sortDropdown")
         self.listOfFlies=self.driver.find_elements_by_xpath("//ul[@id='flightModuleList']/li")
+        self.sortDurationAsc=self.driver.find_element_by_css_selector("#sortDropdown > option[value='duration:asc']")
+        self.sortDurationDes=self.driver.find_element_by_css_selector("#sortDropdown > option[value='duration:desc']")
     '''
     Method to Verify all components in the pages
     Sort
@@ -122,6 +124,20 @@ class TravelocitySelectYourDeparture (BasePage):
                 continue     
         return str(varReturn)+"-"+varFallo
     
-    
-                
+    '''
+    Method to verify Sort by duration
+    '''
+    def verifybyDuration(self):
+        varReturnByDuration="The order by duration is ok"
+        WebDriverWait(self.driver,20).until(EC.visibility_of_all_elements_located((By.XPATH,"//ul[@id='flightModuleList']"))) 
+        varOrderOrigin = self.goThroughList(self.listOfFlies)
+        self.sortDurationAsc.click()
+        
+        self.listOfFliesAfterOrder= self.driver.find_elements_by_xpath("//ul[@id='flightModuleList']/li")
+        WebDriverWait(self.driver,20).until(EC.visibility_of_all_elements_located((By.ID,"flightModuleList"))) 
+        
+        varOrderDurationAsc=self.goThroughList(self.listOfFliesAfterOrder)
+        verCorrectOrderBolean=self.comparetSort(varOrderOrigin, varOrderDurationAsc, "desc")
+        
+        return str(verCorrectOrderBolean)+"-"+varReturnByDuration        
         

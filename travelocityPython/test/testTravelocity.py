@@ -14,10 +14,16 @@ class TestTravelocity(BaseTest):
         self.varPage = TravelocityHome(self.driver)
         self.varYourDeparture=self.varPage.findFly()
         varReturn=self.varYourDeparture.verifyAllComponents()
-        varAsserBoolean=ast.literal_eval(bp.splitReturn(self,varReturn, 0))
-        varReturnFallo = bp.splitReturn(self,varReturn,1)   
-        assert varAsserBoolean == True,varReturnFallo
+        varAsserBooleanVerifyAllComponents=ast.literal_eval(bp.splitReturn(self,varReturn, 0))
+        varReturnFalloVerifyAllComponents = bp.splitReturn(self,varReturn,1)   
         
+        assert varAsserBooleanVerifyAllComponents == True, varReturnFalloVerifyAllComponents
+        
+        varSortbyDuration = self.varYourDeparture.verifybyDuration()
+        varAssertBooleanDuration =ast.literal_eval(bp.splitReturn(self, varSortbyDuration, 0))
+        varReturnFalloSortbyDuration=bp.splitReturn(self,varSortbyDuration,1)
+        
+        assert varAssertBooleanDuration==True, varReturnFalloSortbyDuration
         
         
         
