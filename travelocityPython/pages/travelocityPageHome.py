@@ -25,6 +25,8 @@ class TravelocityHome(BasePage):
         
     def findFly(self):
         
+        WebDriverWait(self.driver,30).until(EC.element_to_be_clickable((By.ID,"tab-flight-tab-hp")))
+
         self.botonVuelos.click()
         self.botonRoundTrip.click()
         self.selectFrom.click()

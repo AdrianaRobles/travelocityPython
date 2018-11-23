@@ -1,9 +1,10 @@
 from pages import BasePage
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import *
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 import ast
+import time
 
 '''
 Created on 17/11/2018
@@ -20,6 +21,7 @@ class TravelocitySelectYourDeparture (BasePage):
         self.listOfFlies=self.driver.find_elements_by_xpath("//ul[@id='flightModuleList']/li")
         self.sortDurationAsc=self.driver.find_element_by_css_selector("#sortDropdown > option[value='duration:asc']")
         self.sortDurationDes=self.driver.find_element_by_css_selector("#sortDropdown > option[value='duration:desc']")
+        self.wait = WebDriverWait(self.driver, 10, poll_frequency=1, ignored_exceptions=[ElementNotVisibleException, ElementNotSelectableException])
     '''
     Method to Verify all components in the pages
     Sort
@@ -79,7 +81,7 @@ class TravelocitySelectYourDeparture (BasePage):
     '''
     def __verifyButtonSelect(self):
         varFallo="All result has button select"
-        WebDriverWait(self.driver,10).until(EC.visibility_of_all_elements_located((By.XPATH,"//ul[@id='flightModuleList']")))  
+        self.wait.until(EC.visibility_of_all_elements_located((By.XPATH,"//ul[@id='flightModuleList']")))  
         print("There are "+str(len(self.listOfFlies))+" flies to verify select")
        
         x=0  #var to count to select button
@@ -91,7 +93,7 @@ class TravelocitySelectYourDeparture (BasePage):
                 try:
                     x=x+1 
                     varTextToFind="//button//span[text()='Select result "+str(x)+" when sorted by price']"
-                    WebDriverWait(self.driver,10).until(EC.visibility_of_all_elements_located((By.XPATH,varTextToFind)))
+                    self.wait.until(EC.visibility_of_all_elements_located((By.XPATH,varTextToFind)))
                     varSelect = fly.find_element_by_xpath(varTextToFind)
                     if varSelect.text == "Select result "+str(x)+" when sorted by price":
                         varReturn = True
@@ -102,22 +104,32 @@ class TravelocitySelectYourDeparture (BasePage):
                     continue
                 try:
                     varTextToDuration="//li["+str(numLi)+"]//span[@class='duration-emphasis'][@data-test-id='duration']"
+                    self.wait.until(EC.visibility_of_all_elements_located((By.XPATH,varTextToDuration)))
                     varDuration = fly.find_element_by_xpath(varTextToDuration)
                     if varDuration.text :
                         varReturn = True
                 except NoSuchElementException as e:
+                    print(e)
                     varReturn = False
                     varFallo="The element li number "+str(numLi)+" has not duration"
                     print("Error has to be that the li number "+str(numLi)+" has not duration ")
                 try:
-                    varTextToBaggage="//li["+str(numLi)+"]//span[@class='forced-tray-toggle-text']"
+                    varTextToBaggage="//li["+str(numLi)+"]//span[@class='show-flight-details']"
                     varBaggage = fly.find_element_by_xpath(varTextToBaggage)
-                    if varBaggage == "See fare restrictions and baggage fees":
+                    
+                    if varBaggage.text.find("baggage"):
                         varReturn = True
+                       
                 except NoSuchElementException as e:
-                    varReturn = False
-                    varFallo="The element li number "+str(numLi)+" has not baggage"
-                    print("Error has to be that the li number "+str(numLi)+" has not baggage")
+                    try:
+                        varTextToBaggage = "//li["+str(numLi)+"]//span[@class='forced-tray-toggle-text']"
+                        varBaggage = fly.find_element_by_xpath(varTextToBaggage)
+                        if varBaggage.text.find("baggage"):
+                            varReturn = True
+                    except NoSuchElementException as e:
+                        varReturn = False
+                        varFallo="The element li number "+str(numLi)+" has not baggage"
+                        print("Error has to be that the li number "+str(numLi)+" has not baggage")
                     
             else:
                 #print("The webElement has not to have select because is a promo")
@@ -128,16 +140,22 @@ class TravelocitySelectYourDeparture (BasePage):
     Method to verify Sort by duration
     '''
     def verifybyDuration(self):
+        
         varReturnByDuration="The order by duration is ok"
-        WebDriverWait(self.driver,20).until(EC.visibility_of_all_elements_located((By.XPATH,"//ul[@id='flightModuleList']"))) 
+        self.wait.until(EC.visibility_of_all_elements_located((By.XPATH,"//ul[@id='flightModuleList']"))) 
         varOrderOrigin = self.goThroughList(self.listOfFlies)
         self.sortDurationAsc.click()
         
-        self.listOfFliesAfterOrder= self.driver.find_elements_by_xpath("//ul[@id='flightModuleList']/li")
-        WebDriverWait(self.driver,20).until(EC.visibility_of_all_elements_located((By.ID,"flightModuleList"))) 
+        self.wait.until(EC.presence_of_all_elements_located((By.ID,"flightModuleList"))) 
+        time.sleep(8)
+        self.listOfFliesAfterOrder= self.driver.find_elements_by_css_selector("#flightModuleList>li")
+       
         
         varOrderDurationAsc=self.goThroughList(self.listOfFliesAfterOrder)
-        verCorrectOrderBolean=self.comparetSort(varOrderOrigin, varOrderDurationAsc, "desc")
-        
-        return str(verCorrectOrderBolean)+"-"+varReturnByDuration        
+        verCorrectOrderBolean=self.comparetSort(varOrderOrigin, varOrderDurationAsc, "asc")
+        if verCorrectOrderBolean :
+            return str(verCorrectOrderBolean)+"-"+varReturnByDuration  
+        else:
+            return str(verCorrectOrderBolean)+"-The list is not in order"  
+      
         
