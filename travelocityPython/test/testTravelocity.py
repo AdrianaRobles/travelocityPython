@@ -15,7 +15,6 @@ class TestTravelocity(BaseTest):
         '''
         This part of code does the steps to verify all components inside of the page
         '''
-        
         varReturn=self.varYourDeparture.verifyAllComponents()
         varAsserBooleanVerifyAllComponents=ast.literal_eval(bp.splitReturn(self,varReturn, 0))
         varReturnFalloVerifyAllComponents = bp.splitReturn(self,varReturn,1)  
@@ -28,14 +27,19 @@ class TestTravelocity(BaseTest):
         varReturnFalloSortbyDuration=bp.splitReturn(self,varSortbyDuration,1)
         
         '''
-        This part of code dos the steps to verify all details of Trip
+        This part of code does the steps to verify all details of Trip
         '''
         self.varVerifySummaryComponents = self.varYourDeparture.selectFirstResult()
         varReturnVerifySummaryComponents = self.varVerifySummaryComponents.verifyTripComponents()
         varAssertBooleanSummaryComponents = ast.literal_eval(bp.splitReturn(self, varReturnVerifySummaryComponents, 0))
         varReturnFalloSumaryComponents = bp.splitReturn(self,varReturnVerifySummaryComponents,1)
-        
-        
+        '''
+        This part of code does the steps to verify all details of who s traveling
+        '''
+        self.varWhoStraveling =  self.varVerifySummaryComponents.sendToWhoSTraveling()
+        varReturnWhoSTraveling=self.varWhoStraveling.verifyPageWhoStraveling()
+        varAssertBooleanWhoSTraveling =ast.literal_eval(bp.splitReturn(self,varReturnWhoSTraveling,0))
+        varReturnFalloWhoSTraveling = bp.splitReturn(self, varReturnWhoSTraveling, 1)
         try:
             self.assertEqual(varAsserBooleanVerifyAllComponents, True, varReturnFalloVerifyAllComponents)
         except AssertionError:
@@ -48,6 +52,9 @@ class TestTravelocity(BaseTest):
             self.assertEqual(varAssertBooleanSummaryComponents,True,varReturnFalloSumaryComponents)
         except AssertionError:
                 print("There is a Error in varVerifySummaryComponents "+str(varAssertBooleanSummaryComponents)+">>>"+varReturnFalloSumaryComponents)
-        
+        try:
+            self.assertEqual(varAssertBooleanWhoSTraveling,True,varReturnFalloWhoSTraveling)
+        except AssertionError:
+                print("There is a Error in Who S traveling "+str(varAssertBooleanWhoSTraveling)+">>>"+varReturnFalloWhoSTraveling)
         
         

@@ -9,15 +9,26 @@ import re
 
 
 class BasePage():
+    
+    '''
+    Method to driver in all pages Objets
+    
+    '''
     def __init__(self,driver):
         self.driver = driver
-    
+    '''
+    Method to send driver
+    '''
     def getDriver(self):
         return self.driver
-
+    '''
+    Method to close the driver
+    '''
     def dispose(self):
         self.driver.close() 
-        
+    '''
+    Method helper to change format date
+    '''    
     def monthToNum(self,shortMonth):
         return{
             'Jan' : 1,
@@ -33,11 +44,16 @@ class BasePage():
             'Nov' : 11,
             'Dec' : 12
         }[shortMonth]
-    
+    '''
+    Method helper to sple
+    '''
     def splitReturn(self,stringReturn,numParam):
         varArrayString = stringReturn.split("-")
         return varArrayString[numParam]
-        
+    '''
+    Method helper to run through the list of flies and
+    discriminate all flies that they are not flies 
+    '''    
             
     def goThroughList(self,listToRun):
         numLi=0  #var to count li to baggages, duration, flight details
@@ -47,10 +63,7 @@ class BasePage():
             numLi=numLi+1
             
             if varClass == "flight-module segment offer-listing":
-                
-               
                 try:
-                    
                     varTextToDuration="//li["+str(numLi)+"]//span[@class='duration-emphasis'][@data-test-id='duration']"
                     WebDriverWait(self.driver,60).until(EC.presence_of_element_located((By.XPATH,varTextToDuration))) 
                     varDuration = li.find_element_by_xpath(varTextToDuration)
@@ -65,18 +78,19 @@ class BasePage():
                 #print("The webElement has not to have select because is a promo")
                 continue
         varListDuration.pop(0) 
-        print("********************************")
         return varListDuration
-    
+    '''
+    Method to compare list and verify the sort is correct or not
+    '''
     def comparetSort(self,listOrign,listOrderDuration,ascOrDesc):
         if ascOrDesc=="asc":
             
             listOrign=self.returnNumbers(listOrign)
             listOrign.sort(key=int)
             listOrderDuration=self.returnNumbers(listOrderDuration)
-            print(listOrign)
-            print("----------------------------------------------------")
-            print(listOrderDuration)
+            #print(listOrign)
+            #print("----------------------------------------------------")
+            #print(listOrderDuration)
             if listOrign==listOrderDuration:
                 return True
             else:

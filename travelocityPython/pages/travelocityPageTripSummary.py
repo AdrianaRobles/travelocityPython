@@ -3,6 +3,7 @@ from selenium.common.exceptions import *
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from pages import BasePage
+from pages.travelocityPageWhoSTraveling import TravelocityWhoStraveling
 '''
 Created on 26/11/2018
 
@@ -132,6 +133,12 @@ class TravelocityTripSummary (BasePage):
             self.varError = "------------There is not some Information about departure or Return"
             print(str(self.varDepartureReturnInformation)+self.varError)
             print(e)
-                
+    
+    def sendToWhoSTraveling(self):
+        buttonBooking =self.driver.find_element_by_id(self.idButtonBooking)
+        buttonBooking.click()
+        
+        return TravelocityWhoStraveling(self.driver)
+                  
         
         
