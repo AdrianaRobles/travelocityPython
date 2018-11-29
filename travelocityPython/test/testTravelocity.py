@@ -11,7 +11,7 @@ class TestTravelocity(BaseTest):
     
     def test_selectDataPicker(self):
         self.varPage         = TravelocityHome(self.driver)
-        self.varYourDeparture=self.varPage.findFly()
+        self.varYourDeparture = self.varPage.findFly()
         '''
         This part of code does the steps to verify all components inside of the page
         '''
@@ -30,10 +30,12 @@ class TestTravelocity(BaseTest):
         '''
         This part of code dos the steps to verify all details of Trip
         '''
-        varVerifySummaryComponents = self.varYourDeparture.selectFirstResult()
-        varReturnVerifySummaryComponents = varVerifySummaryComponents.verifyTripComponents()
+        self.varVerifySummaryComponents = self.varYourDeparture.selectFirstResult()
+        varReturnVerifySummaryComponents = self.varVerifySummaryComponents.verifyTripComponents()
         varAssertBooleanSummaryComponents = ast.literal_eval(bp.splitReturn(self, varReturnVerifySummaryComponents, 0))
-        varReturnFalloSumaryComponents = bp.splitReturn(self,varVerifySummaryComponents,1)
+        varReturnFalloSumaryComponents = bp.splitReturn(self,varReturnVerifySummaryComponents,1)
+        
+        
         try:
             self.assertEqual(varAsserBooleanVerifyAllComponents, True, varReturnFalloVerifyAllComponents)
         except AssertionError:

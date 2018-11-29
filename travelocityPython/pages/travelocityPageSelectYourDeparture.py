@@ -192,8 +192,11 @@ class TravelocitySelectYourDeparture (BasePage):
         time.sleep(3)
         self.buttonThirthSelectThisFare = self.driver.find_element_by_css_selector(self.ccsThirtSelectThisFare)
         self.buttonThirthSelectThisFare.click()
+        time.sleep(3)
         self.buttonNoThanks = self.driver.find_element_by_id(self.idNotThanks) 
         self.buttonNoThanks.click()
+        time.sleep(15)
+        self.driver.switch_to_window(self.driver.window_handles[1])
         
         return TravelocityTripSummary(self.driver)
         

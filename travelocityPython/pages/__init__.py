@@ -3,7 +3,9 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
 import time
+import re
 
 
 class BasePage():
@@ -95,9 +97,11 @@ class BasePage():
     
     def returnNumbers(self,listToTransform):
         listReturnNumbers=[None]
-        x=0
+        
         for item in listToTransform:
-            x=x+1
+            if re.findall(" [0-9]m$", item):
+                
+                item = item.replace("h ","h 0")
             newItem=item.replace("h ","")
             newItem=newItem.replace("m","")
             listReturnNumbers.append(newItem)
